@@ -20,7 +20,7 @@
 2. 本项目仅供学习交流使用，如有侵权，立即删除
 
 
-#### Android
+#### 截图
 <div>
     <img src='./screenshots/android01.jpg' width=280>
     <img src='./screenshots/android02.png' width=280>
@@ -28,4 +28,10 @@
 </div>
 <div>
     <img src='./screenshots/android04.jpg'>
+</div>
+<div>
+    <img src='./screenshots/android05.jpg'>
+</div>
+<div>
+    <img src='./screenshots/android06.jpg'>
 </div>
