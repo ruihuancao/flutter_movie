@@ -2,7 +2,7 @@
 - 来自互联网的影视数据,使用Flutter构建，支持Android,IOS
 - [GitHub](https://github.com/ruihuancao/flutter_movie)
 - [Flutter](https://flutter.io/).
-
+- [Google Play](https://play.google.com/store/apps/details?id=com.ruihuan.flutter.fluttermovie).
 
 # 功能
 
