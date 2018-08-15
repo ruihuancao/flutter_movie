@@ -45,7 +45,7 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   void initState() {
-    if(tabviews.isEmpty){
+    if (tabviews.isEmpty) {
       tabviews = _allPages.map((page) {
         return MovieList(page.type);
       }).toList();
@@ -69,7 +69,13 @@ class _VideoPageState extends State<VideoPage> {
                 IconButton(
                   tooltip: 'Search',
                   icon: Icon(Icons.search),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => VideoSearchPage()),
+                    );
+                  },
                 )
               ],
             ),
@@ -146,9 +152,10 @@ class _MovieListState extends State<MovieList> {
     );
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
-    Iterable<Widget> listTiles = list.map((Movie item) => buildListTile(context, item));
+    Iterable<Widget> listTiles =
+        list.map((Movie item) => buildListTile(context, item));
     return PageLoadStateWidget(
         pageLoadState: pageLoadState,
         content: PullToRefushWidget(
@@ -157,11 +164,13 @@ class _MovieListState extends State<MovieList> {
           refush: _refushList,
           itemBuilder: (context, index) {
             return GestureDetector(
-              child: ListTile.divideTiles(context: context, tiles: listTiles).toList()[index],
-              onTap: (){
+              child: ListTile.divideTiles(context: context, tiles: listTiles)
+                  .toList()[index],
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => VideoDetailPage(list[index].link)),
+                  MaterialPageRoute(
+                      builder: (context) => VideoDetailPage(list[index].link)),
                 );
               },
             );
@@ -170,9 +179,7 @@ class _MovieListState extends State<MovieList> {
   }
 }
 
-
 class VideoDetailPage extends StatefulWidget {
-
   String link;
 
   VideoDetailPage(this.link);
@@ -182,14 +189,13 @@ class VideoDetailPage extends StatefulWidget {
 }
 
 class _VideoDetailPageState extends State<VideoDetailPage> {
-
   String source;
   MovieDetail movieDetail;
   PageLoadState pageLoadState = PageLoadState.loading;
 
   @override
   void initState() {
-    getMovieDetail(widget.link).then((detail){
+    getMovieDetail(widget.link).then((detail) {
       setState(() {
         movieDetail = detail;
         pageLoadState = PageLoadState.content;
@@ -198,18 +204,27 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     super.initState();
   }
 
-  Widget buildHead(){
+  Widget buildHead() {
     return Container(
       child: Row(
         children: <Widget>[
           Container(
-            child: Image.network(movieDetail.image, width: 135.0, height: 192.0, fit: BoxFit.cover,),
+            child: Image.network(
+              movieDetail.image,
+              width: 135.0,
+              height: 192.0,
+              fit: BoxFit.cover,
+            ),
             padding: EdgeInsets.all(12.0),
           ),
-          Expanded(child: Column(
+          Expanded(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: movieDetail.infoList.map((text){
-              return Text(text, maxLines: 1,);
+            children: movieDetail.infoList.map((text) {
+              return Text(
+                text,
+                maxLines: 1,
+              );
             }).toList(),
           ))
         ],
@@ -217,14 +232,14 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     );
   }
 
-  Widget buildInfo(){
+  Widget buildInfo() {
     return Container(
       padding: EdgeInsets.all(12.0),
       child: Text(movieDetail.detail),
     );
   }
 
-  List<Widget> getListWidget(){
+  List<Widget> getListWidget() {
     List<Widget> list = [];
     list.add(buildHead());
     list.add(buildInfo());
@@ -232,56 +247,253 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     return list;
   }
 
-  Widget buildContent(BuildContext context){
-    if(movieDetail == null){
+  Widget buildContent(BuildContext context) {
+    if (movieDetail == null) {
       return Container();
     }
     return ListView(
       children: getListWidget(),
     );
   }
-  
-  List<Widget> buildPlayList(){
-    return getPlayerSource().map((str){
+
+  List<Widget> buildPlayList() {
+    return getPlayerSource().map((str) {
       String title = str.split("\$")[0];
       String link = str.split("\$")[1];
       return ListTile(
         title: Text(title),
-        trailing: RaisedButton(child: Text("播放"), onPressed: (){
-          print("link: $link");
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => VideoFullPage(link)),
-          );
-        }),
+        trailing: RaisedButton(
+            child: Text("播放"),
+            onPressed: () {
+              print("link: $link");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VideoFullPage(link)),
+              );
+            }),
       );
     }).toList();
   }
 
-  List<String> getPlayerSource(){
+  List<String> getPlayerSource() {
     List<String> categorys = movieDetail.source.keys.toList();
-    if(categorys.contains("ckm3u8")){
+    if (categorys.contains("ckm3u8")) {
       return movieDetail.source["ckm3u8"];
     }
     return movieDetail.source[categorys[0]];
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("详情"),
       ),
-      body: PageLoadStateWidget(pageLoadState: pageLoadState, content: buildContent(context)),
+      body: PageLoadStateWidget(
+          pageLoadState: pageLoadState, content: buildContent(context)),
     );
   }
 }
 
-
 class _VidePageModel {
-  _VidePageModel({this.text, this.type, this.data});
+  _VidePageModel({this.text, this.type});
 
   String text;
   int type;
-  List<Movie> data;
+}
+
+class VideoSearchPage extends StatefulWidget {
+  @override
+  _VideoSearchPageState createState() => _VideoSearchPageState();
+}
+
+class _VideoSearchPageState extends State<VideoSearchPage> {
+  TextEditingController controller;
+  PageLoadState pageLoadState;
+  List<String> links;
+  int current = 0;
+  List<Movie> list = [];
+  List<String> historyList = [];
+  bool isSearchResult = false;
+
+  @override
+  void initState() {
+    controller = TextEditingController();
+    pageLoadState = PageLoadState.content;
+    getSearchHistory().then((historys) {
+      if (historys != null && historys.isNotEmpty) {
+        setState(() {
+          historyList = historys;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  //刷新主页面
+  Future<void> _refushList() async {
+    if (links.isEmpty) {
+      return null;
+    }
+    return getPageListMovie(links[0]).then((pageData) {
+      setState(() {
+        list = pageData;
+        pageLoadState = PageLoadState.content;
+      });
+      current = 0;
+    });
+  }
+
+  // 加载更多
+  void _loadMore() async {
+    if ((current + 1) < links.length) {
+      getPageListMovie(links[current + 1]).then((pageData) {
+        setState(() {
+          list.addAll(pageData);
+        });
+        current++;
+      });
+    }
+  }
+
+  void search(String query) async {
+    print('Search key: $query');
+    setState(() {
+      isSearchResult = true;
+      pageLoadState = PageLoadState.loading;
+    });
+    links = await getSearchPageLink(query);
+    current = 0;
+    print(links);
+    if (links.isEmpty) {
+      //无结果
+      setState(() {
+        pageLoadState = PageLoadState.empty;
+      });
+    } else {
+      getPageListMovie(links[current]).then((result) {
+        if (result != null && result.isNotEmpty) {
+          setState(() {
+            list = result;
+            pageLoadState = PageLoadState.content;
+          });
+          addHistory(query);
+        } else {
+          setState(() {
+            pageLoadState = PageLoadState.empty;
+          });
+        }
+      });
+    }
+  }
+
+  void addHistory(String query) {
+    addSearchHistory(query).then((result) {
+      debugPrint("add history success");
+    });
+  }
+
+  Widget buildContent() {
+    if (isSearchResult) {
+      return PullToRefushWidget(
+        list: list,
+        loadMore: _loadMore,
+        refush: _refushList,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            child: ListTile.divideTiles(
+                    context: context,
+                    tiles:
+                        list.map((Movie item) => buildListTile(context, item)))
+                .toList()[index],
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => VideoDetailPage(list[index].link)),
+              );
+            },
+          );
+        },
+      );
+    } else {
+      return ListView.builder(
+          itemCount: historyList.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              child: ListTile(
+                  title: Text(historyList[index]),
+                  leading: Icon(Icons.history)
+              ),
+              onTap: () {
+                controller.text = historyList[index];
+                FocusScope.of(context).requestFocus(new FocusNode());
+                search(historyList[index]);
+              },
+            );
+          });
+    }
+  }
+
+  Widget buildListTile(BuildContext context, Movie item) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(item.name.substring(0, 1)),
+      ),
+      title: Text(item.name),
+      subtitle: Text(item.date),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            icon: IconTheme(
+                data: Theme.of(context).iconTheme,
+                child: Icon(Icons.arrow_back)),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: Container(
+          child: Center(
+            child: TextField(
+              controller: controller,
+              autofocus: true,
+              maxLines: 1,
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.search,
+              decoration: new InputDecoration.collapsed(hintText: "输入关键词"),
+              style: Theme.of(context)
+                  .textTheme
+                  .title
+                  .copyWith(fontFamily: "Roboto"),
+              onSubmitted: search,
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          new IconButton(
+            tooltip: 'Clear',
+            icon: IconTheme(
+                data: Theme.of(context).iconTheme,
+                child: const Icon(Icons.clear)),
+            onPressed: () {
+              controller.clear();
+            },
+          )
+        ],
+      ),
+      body: PageLoadStateWidget(
+          pageLoadState: pageLoadState, content: buildContent()),
+    );
+  }
 }

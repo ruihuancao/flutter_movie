@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
 import 'movie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   // 1 电影 2连续剧 3 综艺 4动漫 5动作片 6喜剧 7爱情 8科幻 9恐怖
@@ -173,4 +174,30 @@ List<Movie> parseList(String html) {
     list.add(movie);
   }
   return list;
+}
+
+Future<List<String>> getSearchHistory() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getStringList("search_history");
+}
+
+Future<bool> addSearchHistory(String history) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> list = prefs.getStringList("search_history");
+  if(list == null ){
+    list = [];
+  }
+  if(list.contains(history)){
+    list.remove(history);
+  }
+  list.add(history);
+  prefs.setStringList("search_history", list);
+  return true;
+}
+
+Future<bool> clearSearchHistory() async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> list = [];
+  prefs.setStringList("search_history", list);
+  return true;
 }

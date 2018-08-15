@@ -19,10 +19,15 @@ class VideoPlayPause extends StatefulWidget {
 class _VideoPlayPauseState extends State<VideoPlayPause> {
   Widget imageFadeAnim;
   VoidCallback listener;
+  String tip;
 
   _VideoPlayPauseState() {
     listener = () {
       setState(() {});
+      if (controller.value.hasError) {
+        print(controller.value.errorDescription);
+        tip = "加载失败";
+      }
     };
   }
 
@@ -223,6 +228,7 @@ abstract class _PlayerLifeCycleState extends State<PlayerLifeCycle> {
     controller.addListener(() {
       if (controller.value.hasError) {
         print(controller.value.errorDescription);
+        Navigator.pop(context);
       }
     });
     controller.initialize();

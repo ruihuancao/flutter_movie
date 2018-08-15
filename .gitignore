@@ -7,3 +7,6 @@
 build/
 
 .flutter-plugins
+android/key.properties
+.idea
+android/app/src/main/java/io/
