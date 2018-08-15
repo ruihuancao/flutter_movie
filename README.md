@@ -28,10 +28,6 @@
 </div>
 <div>
     <img src='./screenshots/android04.jpg'>
-</div>
-<div>
     <img src='./screenshots/android05.jpg'>
-</div>
-<div>
     <img src='./screenshots/android06.jpg'>
 </div>
