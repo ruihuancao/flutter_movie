@@ -23,6 +23,9 @@
 #### Android
 <div>
     <img src='./screenshots/android01.jpg' width=280>
-    <img src='./screenshots/android02.jpg' width=280>
+    <img src='./screenshots/android02.png' width=280>
     <img src='./screenshots/android03.jpg' width=280>
+</div>
+<div>
+    <img src='./screenshots/android04.jpg'>
 </div>
