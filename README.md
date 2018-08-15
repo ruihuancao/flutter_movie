@@ -22,12 +22,11 @@
 
 #### 截图
 <div>
-    <img src='./screenshots/android01.jpg' width=300>
-    <img src='./screenshots/android02.png' width=300>
-    <img src='./screenshots/android03.jpg' width=300>
+    <img src='./screenshots/android01.jpg' width=280>
+    <img src='./screenshots/android02.png' width=280>
+    <img src='./screenshots/android03.jpg' width=280>
 </div>
 <div>
-    <img src='./screenshots/android04.jpg' width=300>
-    <img src='./screenshots/android05.jpg' width=300>
-    <img src='./screenshots/android06.jpg' width=300>
+    <img src='./screenshots/android04.jpg' width=420>
+    <img src='./screenshots/android06.jpg' width=420>
 </div>
