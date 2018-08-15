@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import '../data/movie.dart';
 import '../data/movie_api.dart';
 import '../widget/pulltorefush.dart';
@@ -170,7 +169,7 @@ class _MovieListState extends State<MovieList> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => VideoDetailPage(list[index].link)),
+                      builder: (context) => VideoDetailPage(list[index].link, list[index].name)),
                 );
               },
             );
@@ -181,20 +180,24 @@ class _MovieListState extends State<MovieList> {
 
 class VideoDetailPage extends StatefulWidget {
   String link;
+  String name;
 
-  VideoDetailPage(this.link);
+  VideoDetailPage(this.link, this.name);
 
   @override
   _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
-class _VideoDetailPageState extends State<VideoDetailPage> {
+class _VideoDetailPageState extends State<VideoDetailPage>
+    with TickerProviderStateMixin {
   String source;
   MovieDetail movieDetail;
   PageLoadState pageLoadState = PageLoadState.loading;
+  TabController tabController;
 
   @override
   void initState() {
+    tabController = new TabController(length: 2, vsync: this);
     getMovieDetail(widget.link).then((detail) {
       setState(() {
         movieDetail = detail;
@@ -205,7 +208,11 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
   }
 
   Widget buildHead() {
+    if (movieDetail == null) {
+      return Container();
+    }
     return Container(
+      margin: EdgeInsets.only(top: 68.0),
       child: Row(
         children: <Widget>[
           Container(
@@ -218,62 +225,104 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
             padding: EdgeInsets.all(12.0),
           ),
           Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: movieDetail.infoList.map((text) {
-              return Text(
-                text,
-                maxLines: 1,
-              );
-            }).toList(),
-          ))
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: movieDetail.infoList.map((text) {
+                    return Text(
+                      text,
+                      maxLines: 1,
+                    );
+                  }).toList(),
+                ),
+              )
+          )
         ],
       ),
     );
   }
 
   Widget buildInfo() {
+    if (movieDetail == null) {
+      return Container();
+    }
     return Container(
       padding: EdgeInsets.all(12.0),
       child: Text(movieDetail.detail),
     );
   }
 
-  List<Widget> getListWidget() {
-    List<Widget> list = [];
-    list.add(buildHead());
-    list.add(buildInfo());
-    list.addAll(buildPlayList());
-    return list;
+  Widget buildPlayList(){
+    if(movieDetail == null){
+      return Container();
+    }
+    return ListView(
+        children: movieDetail.source.keys.toList().map((key){
+          return ExpansionTile(
+            title: Text("播放源：$key"),
+            backgroundColor: Theme.of(context).accentColor.withOpacity(0.025),
+            children: movieDetail.source[key].map((text){
+              return ListTile(
+                title: Text(text.split("\$")[0]),
+                trailing: RaisedButton(onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VideoFullPage(text.split("\$")[1])
+                    ),
+                  );
+                }, child: Text("Play"),
+                ),
+              );
+            }).toList(),
+          );
+        }).toList(),
+    );
   }
 
   Widget buildContent(BuildContext context) {
     if (movieDetail == null) {
       return Container();
     }
-    return ListView(
-      children: getListWidget(),
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverAppBar(
+            title: Text(widget.name),
+            expandedHeight: 256.0,
+            pinned: true,
+            floating: false,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                child: buildHead(),
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SliverAppBarDelegate(
+              TabBar(
+                labelColor: Colors.black87,
+                unselectedLabelColor: Colors.grey,
+                controller: tabController,
+                tabs: [
+                  Tab(text: "视频介绍"),
+                  Tab(text: "播放列表"),
+                ],
+              ),
+            ),
+          )
+        ];
+      },
+      body: TabBarView(controller: tabController, children: [
+        buildInfo(),
+        buildPlayList()
+      ]),
     );
   }
 
-  List<Widget> buildPlayList() {
-    return getPlayerSource().map((str) {
-      String title = str.split("\$")[0];
-      String link = str.split("\$")[1];
-      return ListTile(
-        title: Text(title),
-        trailing: RaisedButton(
-            child: Text("播放"),
-            onPressed: () {
-              print("link: $link");
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => VideoFullPage(link)),
-              );
-            }),
-      );
-    }).toList();
-  }
 
   List<String> getPlayerSource() {
     List<String> categorys = movieDetail.source.keys.toList();
@@ -283,15 +332,48 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     return movieDetail.source[categorys[0]];
   }
 
+  Widget getAppBar(){
+    if(movieDetail == null){
+      return AppBar(
+        title: Text(widget.name),
+      );
+    }else{
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("详情"),
-      ),
-      body: PageLoadStateWidget(
-          pageLoadState: pageLoadState, content: buildContent(context)),
+      appBar: getAppBar(),
+      body: PageLoadStateWidget(pageLoadState: pageLoadState, content: buildContent(context)),
     );
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }
 
@@ -416,7 +498,7 @@ class _VideoSearchPageState extends State<VideoSearchPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => VideoDetailPage(list[index].link)),
+                    builder: (context) => VideoDetailPage(list[index].link, list[index].name)),
               );
             },
           );
@@ -429,8 +511,7 @@ class _VideoSearchPageState extends State<VideoSearchPage> {
             return GestureDetector(
               child: ListTile(
                   title: Text(historyList[index]),
-                  leading: Icon(Icons.history)
-              ),
+                  leading: Icon(Icons.history)),
               onTap: () {
                 controller.text = historyList[index];
                 FocusScope.of(context).requestFocus(new FocusNode());
