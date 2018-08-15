@@ -27,7 +27,7 @@
     <img src='./screenshots/android03.jpg' width=280>
 </div>
 <div>
-    <img src='./screenshots/android04.jpg'>
-    <img src='./screenshots/android05.jpg'>
-    <img src='./screenshots/android06.jpg'>
+    <img src='./screenshots/android04.jpg' width=280>
+    <img src='./screenshots/android05.jpg' width=280>
+    <img src='./screenshots/android06.jpg' width=280>
 </div>
