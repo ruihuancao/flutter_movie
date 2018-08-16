@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 import '../data/movie.dart';
 import '../data/movie_api.dart';
 import '../widget/pulltorefush.dart';
 import '../widget/page_state.dart';
-import '../widget/video_player.dart';
+import 'package:flutter_simple_video_player/flutter_simple_video_player.dart';
 
 class VideoPage extends StatefulWidget {
   @override
@@ -55,6 +56,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+        initialIndex: 0,
         length: _allPages.length,
         child: Scaffold(
             appBar: AppBar(
@@ -212,34 +214,44 @@ class _VideoDetailPageState extends State<VideoDetailPage>
       return Container();
     }
     return Container(
-      margin: EdgeInsets.only(top: 68.0),
-      child: Row(
-        children: <Widget>[
-          Container(
-            child: Image.network(
-              movieDetail.image,
-              width: 135.0,
-              height: 192.0,
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(movieDetail.image),
               fit: BoxFit.cover,
-            ),
-            padding: EdgeInsets.all(12.0),
-          ),
-          Expanded(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: movieDetail.infoList.map((text) {
-                    return Text(
-                      text,
-                      maxLines: 1,
-                    );
-                  }).toList(),
-                ),
-              )
+              colorFilter: ColorFilter.mode(Color.fromARGB(200, 20, 10, 40), BlendMode.srcOver)
           )
-        ],
+      ),
+      child: Container(
+        margin: EdgeInsets.only(top: 68.0),
+        child: Row(
+          children: <Widget>[
+            Container(
+              child: Image.network(
+                movieDetail.image,
+                width: 135.0,
+                height: 192.0,
+                fit: BoxFit.cover,
+              ),
+              padding: EdgeInsets.all(12.0),
+            ),
+            Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: movieDetail.infoList.map((text) {
+                      return Text(
+                        text,
+                        maxLines: 1,
+                        style: TextStyle(color: Colors.white),
+                      );
+                    }).toList(),
+                  ),
+                )
+            )
+          ],
+        ),
       ),
     );
   }
@@ -296,7 +308,10 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             floating: false,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                child: buildHead(),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                  child: buildHead(),
+                ),
               ),
             ),
           ),
