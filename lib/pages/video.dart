@@ -37,7 +37,7 @@ class _VideoPageState extends State<VideoPage> {
     _VidePageModel(text: '纪录片', type: 19),
     _VidePageModel(text: '微电影', type: 20),
     _VidePageModel(text: '伦理片', type: 21),
-    _VidePageModel(text: '福利片', type: 22),
+//    _VidePageModel(text: '福利片', type: 22),
   ];
 
   List<Widget> tabviews = [];
