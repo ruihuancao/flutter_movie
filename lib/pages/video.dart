@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:ui' show ImageFilter;
 import '../data/movie.dart';
 import '../data/movie_api.dart';
+import '../data/movie_shared_preferences.dart';
 import '../widget/pulltorefush.dart';
 import '../widget/page_state.dart';
 import 'package:flutter_simple_video_player/flutter_simple_video_player.dart';

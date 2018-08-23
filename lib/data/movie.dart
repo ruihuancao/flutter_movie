@@ -28,4 +28,11 @@ class MovieDetail{
   final String image;
 
   MovieDetail({this.infoList, this.source, this.detail, this.image});
+
+  Map<String, dynamic> toJson() => {
+    'infoList': infoList,
+    'source': source,
+    'detail': detail,
+    'image': image,
+  };
 }
