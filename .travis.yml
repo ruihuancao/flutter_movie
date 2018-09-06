@@ -1,39 +1,39 @@
 os: linux
 language: android
 licenses:
-  - 'android-sdk-preview-license-.+'
-  - 'android-sdk-license-.+'
-  - 'google-gdk-license-.+'
+- android-sdk-preview-license-.+
+- android-sdk-license-.+
+- google-gdk-license-.+
 android:
   components:
-    - tools
-    - platform-tools
-    - build-tools-27.0.0
-    - android-27
-    - sys-img-armeabi-v7a-google_apis-27
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - extra-google-android-support
+  - tools
+  - platform-tools
+  - build-tools-27.0.0
+  - android-27
+  - sys-img-armeabi-v7a-google_apis-27
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - extra-google-android-support
 jdk: oraclejdk8
 sudo: false
 addons:
   apt:
-    # Flutter depends on /usr/lib/x86_64-linux-gnu/libstdc++.so.6 version GLIBCXX_3.4.18
     sources:
-      - ubuntu-toolchain-r-test # if we don't specify this, the libstdc++6 we get is the wrong version
+    - ubuntu-toolchain-r-test
     packages:
-      - libstdc++6
-      - fonts-droid
+    - libstdc++6
+    - fonts-droid
 before_script:
-  - wget https\://services.gradle.org/distributions/gradle-4.4-bin.zip
-  - unzip -qq gradle-4.4-bin.zip
-  - export GRADLE_HOME=$PWD/gradle-4.4
-  - export PATH=$GRADLE_HOME/bin:$PATH
-  - git clone https://github.com/flutter/flutter.git
-  - openssl aes-256-cbc -K $encrypted_b28b0a9a7f5b_key -iv $encrypted_b28b0a9a7f5b_iv -in android/key.properties.enc -out android/key.properties -d
+- wget https\://services.gradle.org/distributions/gradle-4.4-bin.zip
+- unzip -qq gradle-4.4-bin.zip
+- export GRADLE_HOME=$PWD/gradle-4.4
+- export PATH=$GRADLE_HOME/bin:$PATH
+- git clone https://github.com/flutter/flutter.git
 script:
-  - ./flutter/bin/flutter -v build apk
-
+- "./flutter/bin/flutter -v build apk"
 cache:
   directories:
-    - $HOME/.pub-cache
+  - "$HOME/.pub-cache"
+before_install:
+- openssl aes-256-cbc -K $encrypted_d056db0bbbce_key -iv $encrypted_d056db0bbbce_iv
+  -in key.properties.enc -out android/key.properties -d
