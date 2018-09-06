@@ -19,15 +19,3 @@
 # 说明
 1. 数据取自互联网
 2. 本项目仅供学习交流使用，如有侵权，立即删除
-
-
-<!--#### 截图-->
-<!--<div>-->
-    <!--<img src='./screenshots/android01.jpg' width=280>-->
-    <!--<img src='./screenshots/android02.png' width=280>-->
-    <!--<img src='./screenshots/android03.jpg' width=280>-->
-<!--</div>-->
-<!--<div>-->
-    <!--<img src='./screenshots/android04.jpg' width=420>-->
-    <!--<img src='./screenshots/android06.jpg' width=420>-->
-<!--</div>-->
