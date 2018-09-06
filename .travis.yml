@@ -30,7 +30,7 @@ before_script:
   - export GRADLE_HOME=$PWD/gradle-4.4
   - export PATH=$GRADLE_HOME/bin:$PATH
   - git clone https://github.com/flutter/flutter.git
-  - openssl aes-256-cbc -K $encrypted_b28b0a9a7f5b_key -iv $encrypted_b28b0a9a7f5b_iv -in key.properties.enc -out key.properties -d
+  - openssl aes-256-cbc -K $encrypted_b28b0a9a7f5b_key -iv $encrypted_b28b0a9a7f5b_iv -in android/key.properties.enc -out android/key.properties -d
 script:
   - ./flutter/bin/flutter -v build apk
 
