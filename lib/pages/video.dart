@@ -108,6 +108,9 @@ class _MovieListState extends State<MovieList> {
       return null;
     }
     return getPageListMovie(links[0]).then((pageData) {
+      if(mounted){
+        return;
+      }
       setState(() {
         list = pageData;
         pageLoadState = PageLoadState.content;
@@ -263,7 +266,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     }
     return Container(
       padding: EdgeInsets.all(12.0),
-      child: Text(movieDetail.detail),
+      child: Text(movieDetail.detail,),
     );
   }
 
