@@ -1,4 +1,7 @@
 # 木易
+---
+[![Build Status](https://travis-ci.org/ruihuancao/flutter_movie.svg?branch=master)](https://travis-ci.org/ruihuancao/flutter_movie)
+---
 - 来自互联网的影视数据,使用Flutter构建，支持Android,IOS
 - [GitHub](https://github.com/ruihuancao/flutter_movie)
 - [Flutter](https://flutter.io/).
